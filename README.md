@@ -59,7 +59,7 @@ https://github.com/user-attachments/assets/aa9367c8-7d66-4e2b-9841-1de5f2bd446e
 ![聚合设计](doc/聚合.png)
 *聚合设计*
 
-![整体架构](/Users/wangwei/Desktop/架构.png)
+![整体架构](doc/fx-helper整体架构图（dubbo）.png)
 *整体架构*
 
 ## 代码实现
