@@ -1,0 +1,106 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.rest.agg;
+
+service AggRestService{
+  rpc getShop(GetShopRequest) returns (GetShopResponse);
+  rpc getShopOrderList(GetShopOrderListRequest) returns (GetShopOrderListResponse);
+  rpc getUserOrderList(GetUserOrderListRequest) returns (GetUserOrderListResponse);
+}
+
+message GetShopRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  GetShopParam param = 2 [(buf.validate.field).required = true];
+}
+message GetShopParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+}
+message GetShopResponse{
+  common.ResponseStatus status = 1;
+  GetShopResult result = 2;
+}
+message GetShopResult{
+  optional int64 shop_id = 1;
+  optional int64 owner_user_id = 2;
+  optional string shop_name = 3;
+  optional string logo = 4;
+  optional string intro = 5;
+  optional string address = 6;
+  optional string phone = 7;
+  optional int32 status = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+  optional string balance = 11;
+  optional int32 order_count = 12;
+  optional string order_total_amount = 13;
+}
+
+message GetShopOrderListRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  GetShopOrderListParam param = 2 [(buf.validate.field).required = true];
+}
+message GetShopOrderListParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional int32 status = 2;
+  optional google.protobuf.Timestamp from = 3;
+  optional google.protobuf.Timestamp to = 4;
+  optional int32  offset = 5 [(buf.validate.field).int32.gte = 0];
+  optional int32  limit = 6 [(buf.validate.field).int32.gt = 0, (buf.validate.field).int32.lte = 20];
+}
+message GetShopOrderListResponse{
+  common.ResponseStatus status = 1;
+  GetShopOrderListResult result = 2;
+}
+message GetShopOrderListResult{
+  repeated ShopOrderInfo order_infos = 1;
+}
+message ShopOrderInfo{
+  optional int64 id = 1;
+  optional int64 shop_id = 2;
+  optional int64 user_id = 3;
+  optional string capture = 4;
+  optional string amount = 5;
+  optional google.protobuf.Timestamp fx_time = 6;
+  optional int32 status = 7;
+  optional string fail_msg = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+  optional string nick_name = 11;
+  optional string avatar = 12;
+}
+
+message GetUserOrderListRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  GetUserOrderListParam param = 2 [(buf.validate.field).required = true];
+}
+message GetUserOrderListParam{
+  optional int32 status = 1;
+  optional google.protobuf.Timestamp from = 2;
+  optional google.protobuf.Timestamp to = 3;
+  optional int32  offset = 4 [(buf.validate.field).int32.gte = 0];
+  optional int32  limit = 5 [(buf.validate.field).int32.gt = 0, (buf.validate.field).int32.lte = 20];
+}
+message GetUserOrderListResponse{
+  common.ResponseStatus status = 1;
+  GetUserOrderListResult result = 2;
+}
+message GetUserOrderListResult{
+  repeated UserOrderInfo order_infos = 1;
+}
+message UserOrderInfo{
+  optional int64 id = 1;
+  optional int64 shop_id = 2;
+  optional int64 user_id = 3;
+  optional string capture = 4;
+  optional string amount = 5;
+  optional google.protobuf.Timestamp fx_time = 6;
+  optional int32 status = 7;
+  optional string fail_msg = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+  optional string shop_name = 11;
+  optional string shop_logo = 12;
+}

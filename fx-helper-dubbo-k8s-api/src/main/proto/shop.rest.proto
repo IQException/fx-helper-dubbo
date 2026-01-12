@@ -1,0 +1,138 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.rest.shop;
+
+service ShopRestService{
+  rpc create(CreateRequest) returns (CreateResponse);
+  rpc update(UpdateRequest) returns (common.BaseResponse);
+  rpc getShopList(common.BaseRequest) returns (GetShopListResponse);
+  rpc getShopPublicInfo(GetShopPublicInfoRequest) returns (GetShopPublicInfoResponse);
+  rpc getShopDetailInfo(GetShopDetailInfoRequest) returns (GetShopDetailInfoResponse);
+  rpc getQrCodes(GetQrCodesRequest) returns (GetQrCodesResponse);
+  rpc switchFx(SwitchFxRequest) returns (common.BaseResponse);
+}
+
+
+message CreateRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  CreateParam param = 2 [(buf.validate.field).required = true];
+}
+message CreateParam{
+  optional string name = 1 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1, (buf.validate.field).string.max_len = 20];
+  optional string logo = 2 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string intro = 3 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1, (buf.validate.field).string.max_len = 200];
+  optional string address = 4 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string phone = 5 [(buf.validate.field).required = true, (buf.validate.field).string.len = 11];
+  optional string pay_secret = 6 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+message CreateResponse{
+  common.ResponseStatus status = 1;
+  CreateResult result = 2;
+}
+message CreateResult{
+  optional int64 shop_id = 1;
+}
+
+
+message UpdateRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  UpdateParam param = 2 [(buf.validate.field).required = true];
+}
+message UpdateParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional string name = 2 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1, (buf.validate.field).string.max_len = 20];
+  optional string logo = 3 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string intro = 4 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1, (buf.validate.field).string.max_len = 200];
+  optional string address = 5 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string phone = 6 [(buf.validate.field).required = true, (buf.validate.field).string.len = 11];
+}
+
+message SwitchFxRequest{
+  common.MobileRequestHead head = 1;
+  SwitchFxParam param = 2;
+}
+message SwitchFxParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional int32 switch_value = 2  [(buf.validate.field).required = true, (buf.validate.field).int32.gte = 0, (buf.validate.field).int32.lte = 1];
+}
+
+message GetShopListResponse{
+  common.ResponseStatus status = 1;
+  GetShopListResult result = 2;
+}
+message GetShopListResult{
+  repeated ShopInfo shop_infos = 1;
+}
+message ShopInfo{
+  optional int64 shop_id = 1;
+  optional int64 owner_user_id = 2;
+  optional string shop_name = 3;
+  optional string logo = 4;
+  optional string intro = 5;
+  optional string address = 6;
+  optional string phone = 7;
+  optional int32 status = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+}
+
+message GetQrCodesRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  GetQrCodesParam param = 2 [(buf.validate.field).required = true];
+}
+message GetQrCodesParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional int64 number = 2 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0, (buf.validate.field).int64.lte = 10];
+}
+message GetQrCodesResponse{
+  common.ResponseStatus status = 1;
+  GetQrCodesResult result = 2;
+}
+message GetQrCodesResult{
+  repeated string qr_codes = 1;
+}
+
+message GetShopPublicInfoRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  GetShopPublicInfoParam param = 2 [(buf.validate.field).required = true];
+}
+message GetShopPublicInfoParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+}
+message GetShopPublicInfoResponse{
+  common.ResponseStatus status = 1;
+  GetShopPublicInfoResult result = 2;
+}
+message GetShopPublicInfoResult{
+  optional string shop_name = 1;
+  optional string logo = 2;
+  optional string intro = 3;
+  optional string address = 4;
+}
+
+message GetShopDetailInfoRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  GetShopDetailInfoParam param = 2 [(buf.validate.field).required = true];
+}
+message GetShopDetailInfoParam{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+}
+message GetShopDetailInfoResponse{
+  common.ResponseStatus status = 1;
+  GetShopDetailInfoResult result = 2;
+}
+message GetShopDetailInfoResult{
+  optional int64 shop_id = 1;
+  optional int64 owner_user_id = 2;
+  optional string shop_name = 3;
+  optional string logo = 4;
+  optional string intro = 5;
+  optional string address = 6;
+  optional string phone = 7;
+  optional int32 status = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+}

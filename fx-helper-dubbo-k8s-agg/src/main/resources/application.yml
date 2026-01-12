@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: fx-helper-agg
+  profiles:
+    active: dev,common,common-dev
+  config:
+    import:
+      - nacos:wx-config.json?group=fx-helper-common&refreshEnabled=true
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_HOST:host.docker.internal}:8848
+    compatibility-verifier:
+      enabled: false
+
+dubbo:
+  registry:
+    address: nacos://${NACOS_HOST:host.docker.internal}:8848
+    # This will enable application-level service discovery only (the recommended service discovery method for Dubbo3).
+    # For users upgrading from Dubbo2.x, please set the value to 'all' for smooth migration.
+    register-mode: instance
+  protocol:
+    name: tri
+    port: 50057
+  application:
+    name: ${spring.application.name}
+    logger: slf4j
+  provider:
+    timeout: 5000
+    parameters.enable-timeout-countdown: true

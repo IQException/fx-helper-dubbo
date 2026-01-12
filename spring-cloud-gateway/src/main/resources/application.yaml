@@ -1,0 +1,149 @@
+spring:
+  application:
+    name: spring-cloud-gateway-nacos
+  cloud:
+
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:host.docker.internal}:8848
+
+    gateway:
+      httpclient:
+        ssl:
+          useInsecureTrustManager: true
+
+      #      discovery:
+      #        locator:
+      #          enabled: true
+      #
+      #          predicates:
+      #            - name: Path
+      #              args:
+      #                pattern: "'/'+serviceId+'/**'"
+      #          filters:
+      #
+      #            - name: Bypass
+      #              args:
+      #                pattern:
+      #                  - /provider1/**
+      #            - name: Login
+      #              args:
+      #                pattern:
+      #                  - /provider1/**
+      #            - name: CircuitBreaker
+      #              args:
+      #                name: serviceId
+      #            - name: RewritePath
+      #              args:
+      #                regexp: "'/' + serviceId + '/?(?<remaining>.*)'"
+      #                replacement: "'/${remaining}'"
+
+      routes:
+        #        # config the routes for gateway
+        #        #表明前缀/provider1需要截取掉
+        - id: nacos-route          #将/provider1/开头的请求转发到provider1
+          uri: lb://fx-helper-user
+          predicates:
+            - Path=/nacos/**
+          filters:
+            - StripPrefix=1
+            #      routes:
+        #        - id: fx-helper-misc-route
+        #          uri: lb://fx-helper-misc
+        #          predicates:
+        #            - Path=/fx_helper_misc/wx/msg_subscribe,/fx_helper_misc/get_upload_policy
+        #          filters:
+        #            - StripPrefix=1
+        - id: fx-helper-user-route
+          uri: lb://fx-helper-user
+          predicates:
+            - Path=/fx-helper-user/login,/fx-helper-user/hello
+          filters:
+            - StripPrefix=1
+
+        - id: login-filter-misc-route
+          uri: lb://fx-helper-misc
+          predicates:
+            - Path=/fx-helper-misc/wx/msg_subscribe,/fx-helper-misc/get_upload_policy
+          filters:
+            - StripPrefix=1
+            - Login
+        #
+        - id: login-filter-account-route
+          uri: lb://fx-helper-account
+          predicates:
+            - Path=/fx-helper-account/get_account
+          filters:
+            - StripPrefix=1
+            - name: Login
+
+        - id: login-filter-shop-route
+          uri: lb://fx-helper-shop
+          predicates:
+            - Path=/fx-helper-shop/create,/fx-helper-shop/update,/fx-helper-shop/delete,/fx-helper-shop/get_list,/fx-helper-shop/get_info,/fx-helper-shop/get_public_info,/fx-helper-shop/get_detail_info,/fx-helper-shop/get_shop_list,/fx-helper-shop/switch,/fx-helper-shop/get_qr_codes
+          filters:
+            - StripPrefix=1
+            - name: Login
+
+        - id: login-filter-pay-route
+          uri: lb://fx-helper-pay
+          predicates:
+            - Path=/fx-helper-pay/deposit, /fx-helper-pay/withdraw
+          filters:
+            - StripPrefix=1
+            - name: Login
+
+        - id: login-filter-order-route
+          uri: lb://fx-helper-order
+          predicates:
+            - Path=/fx-helper-order/create, /fx-helper-order/pay
+          filters:
+            - StripPrefix=1
+            - name: Login
+
+        - id: login-filter-agg-route
+          uri: lb://fx-helper-agg
+          predicates:
+            - Path=/fx-helper-agg/list_shop_orders, /fx-helper-agg/list_user_orders, /fx-helper-agg/get_shop
+          filters:
+            - StripPrefix=1
+            - name: Login
+management:
+  otlp:
+    metrics:
+      export:
+        step: 2s
+        url: http://${PROMETHEUS_HOST:host.docker.internal}:9090/api/v1/otlp/v1/metrics
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: '*'
+#            allowedMethods:
+#              - GET
+#              - POST
+#            allowedHeaders: '*'
+#            maxAge: 30
+  #        - id: service_route
+  #          uri: http://localhost:8081
+  #          predicates:
+  #            - Path=/service/**
+  #          filters:
+  #            - RewritePath=/service(?<segment>/?.*), $\{segment}
+
+
+server:
+  ssl:
+    enabled: true
+    key-store-password: 6pn1ilvx    #填写jks-password.txt文件内的密码。
+    key-store-type: JKS #JKS格式证书密钥库类型。PFX格式的证书密钥库类型为PKCS12。
+    key-store: classpath:sgj.cool.jks   #您需要使用实际的证书名称替换domain_name.jks。

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-cloud-gateway
+  namespace: fx-helper
+  labels:
+    app: spring-cloud-gateway
+spec:
+#  replicas: 3
+  selector:
+    matchLabels:
+      app: spring-cloud-gateway
+  template:
+    metadata:
+      labels:
+        app: spring-cloud-gateway
+    spec:
+      containers:
+        - name: spring-cloud-gateway
+          image: iqexception/fx-helper-dubbo-k8s:spring-cloud-gateway
+#          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-cloud-gateway
+  labels:
+    app: spring-cloud-gateway
+spec:
+  selector:
+    app: spring-cloud-gateway
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

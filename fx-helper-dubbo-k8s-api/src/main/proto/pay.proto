@@ -1,0 +1,22 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.pay;
+
+service PayService{
+  rpc acct2wx(Acct2wxRequest) returns (Acct2wxResponse);
+}
+
+message Acct2wxRequest{
+  optional int64  account_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional string open_id = 2 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string amount = 3 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+message Acct2wxResponse{
+  common.ResponseStatus status = 1;
+  Acct2wxResult result = 2;
+}
+message Acct2wxResult{
+  optional int64 pay_id = 1;
+}

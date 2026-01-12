@@ -1,0 +1,65 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.order;
+
+service OrderService{
+  rpc getOrderTotalAmount(GetOrderTotalAmountRequest) returns (GetOrderTotalAmountResponse);
+  rpc getOrderList(GetOrderListRequest) returns (GetOrderListResponse);
+  rpc getOrderCount(GetOrderCountRequest) returns (GetOrderCountResponse);
+}
+
+message GetOrderTotalAmountRequest{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional int32 status = 2;
+}
+message GetOrderTotalAmountResponse{
+  common.ResponseStatus status = 1;
+  GetOrderTotalAmountResult result = 2;
+}
+message GetOrderTotalAmountResult{
+  optional string amount = 1;
+}
+
+message GetOrderListRequest{
+  optional int64 shop_id = 1;
+  optional int64 user_id = 2;
+  optional int32 status = 3;
+  optional google.protobuf.Timestamp from = 4;
+  optional google.protobuf.Timestamp to = 5;
+  optional int32  offset = 6;
+  optional int32  limit = 7;
+}
+message GetOrderListResponse{
+  common.ResponseStatus status = 1;
+  GetOrderListResult result = 2;
+}
+message GetOrderListResult{
+  repeated OrderInfo order_infos = 1;
+}
+message OrderInfo{
+  optional int64 order_id = 1;
+  optional int64 shop_id = 2;
+  optional int64 user_id = 3;
+  optional string capture = 4;
+  optional string amount = 5;
+  optional google.protobuf.Timestamp fx_time = 6;
+  optional int32 status = 7;
+  optional string fail_msg = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+}
+
+message GetOrderCountRequest{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional int32 status = 2;
+}
+message GetOrderCountResponse{
+  common.ResponseStatus status = 1;
+  GetOrderCountResult result = 2;
+}
+message GetOrderCountResult{
+  optional int32 count = 1;
+}

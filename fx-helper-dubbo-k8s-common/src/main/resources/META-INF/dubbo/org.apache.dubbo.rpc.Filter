@@ -1,0 +1,3 @@
+clientInfo=com.iqexception.fxhelper.common.filter.ClientInfoFilter
+pbValidation=com.iqexception.fxhelper.common.filter.PbValidationFilter
+bizException=com.iqexception.fxhelper.common.filter.BizExceptionFilter

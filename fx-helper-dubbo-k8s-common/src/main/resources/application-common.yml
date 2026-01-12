@@ -1,0 +1,24 @@
+spring:
+  jooq:
+    sql-dialect: MYSQL
+  data:
+    redis:
+      host: ${REDIS_HOST:host.docker.internal}
+
+management:
+  otlp:
+    metrics:
+      export:
+        step: 2s
+        url: http://${PROMETHEUS_HOST:host.docker.internal}:9090/api/v1/otlp/v1/metrics
+  zipkin:
+    tracing:
+      endpoint: http://${TEMPO_HOST:host.docker.internal}:4318/v1/traces
+      encoding: PROTO3
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      instance: ${HOST_IP}

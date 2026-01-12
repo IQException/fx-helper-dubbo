@@ -1,0 +1,39 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.rest.pay;
+
+service PayRestService{
+  rpc withdraw(WithdrawRequest) returns (common.BaseResponse);
+  rpc deposit(DepositRequest) returns (DepositResponse);
+}
+
+
+message WithdrawRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  WithdrawParam param = 2 [(buf.validate.field).required = true];
+}
+message WithdrawParam{
+  optional string amount = 1 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+
+message DepositRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  DepositParam param = 2 [(buf.validate.field).required = true];
+}
+message DepositParam{
+  optional string amount = 1 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+message DepositResponse{
+  common.ResponseStatus status = 1;
+  DepositResult result = 2;
+}
+message DepositResult{
+  optional string app_id = 1;
+  optional string time_stamp = 2;
+  optional string nonce_str = 3;
+  optional string sign_type = 4;
+  optional string pay_sign = 5;
+  optional string package = 6;
+}

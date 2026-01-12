@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: fx-helper-user
+  profiles:
+    active: dev,common,common-dev
+  config:
+    import:
+      - nacos:wx-config.json?group=fx-helper-common&refreshEnabled=true
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_HOST:host.docker.internal}:8848
+    compatibility-verifier:
+      enabled: false
+
+rocketmq:
+  name-server: ${RMQ_HOST:host.docker.internal}:9876 # FIXME change to proxy addr
+  producer:
+    group: fx-helper-user-producer-group
+    retry-next-server: true
+    topic:
+      create: fx-helper-user-topic-create-user
+  consumer:
+    group: fx-helper-user-consumer-group
+    topic:
+      user-create: fx-helper-user-topic-create-user
+
+
+dubbo:
+  registry:
+    address: nacos://${NACOS_HOST:host.docker.internal}:8848
+    # This will enable application-level service discovery only (the recommended service discovery method for Dubbo3).
+    # For users upgrading from Dubbo2.x, please set the value to 'all' for smooth migration.
+    register-mode: instance
+  protocol:
+    name: tri
+    port: 50053
+  application:
+    name: ${spring.application.name}
+    logger: slf4j
+  provider:
+    timeout: 5000
+    parameters.enable-timeout-countdown: true

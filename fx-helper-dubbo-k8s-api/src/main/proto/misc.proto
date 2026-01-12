@@ -1,0 +1,26 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/empty.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.misc;
+
+service MiscService{
+  rpc sendWxMessage(SendWxMessageRequest) returns (common.BaseResponse);
+  rpc getAccessToken(google.protobuf.Empty) returns (GetAccessTokenResponse);
+}
+
+message SendWxMessageRequest{
+  optional string template_id = 1 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string open_id = 2 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+  optional string page = 3;
+  optional string dataJsonString = 4 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+
+message GetAccessTokenResult{
+  optional string access_token = 1;
+}
+message GetAccessTokenResponse{
+  common.ResponseStatus status = 1;
+  GetAccessTokenResult result = 2;
+}

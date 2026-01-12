@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-helper-shop
+  namespace: fx-helper
+  labels:
+    app: fx-helper-shop
+spec:
+#  replicas: 3
+  selector:
+    matchLabels:
+      app: fx-helper-shop
+  template:
+    metadata:
+      labels:
+        app: fx-helper-shop
+    spec:
+      containers:
+        - name: fx-helper-shop
+          image: iqexception/fx-helper-dubbo-k8s:fx-helper-shop
+#          imagePullPolicy: Always
+
+

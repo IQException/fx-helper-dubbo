@@ -1,0 +1,24 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+package com.iqexception.fxhelper.api.rest.account;
+
+service AccountRestService {
+  rpc getAccount(common.BaseRequest) returns (GetAccountResponse);
+}
+
+message GetAccountResponse{
+  common.ResponseStatus status = 1 ;
+  GetAccountResult result = 2;
+}
+
+message GetAccountResult{
+  optional int64 account_id = 1;
+  optional int64 user_id = 2;
+  optional string balance = 3;
+  optional int32 status = 4;
+  optional google.protobuf.Timestamp created_at = 5;
+  optional google.protobuf.Timestamp updated_at = 6;
+}
+

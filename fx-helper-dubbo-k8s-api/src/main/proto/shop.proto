@@ -1,0 +1,79 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.shop;
+
+service ShopService{
+  rpc getUserShopList(GetUserShopListRequest) returns (GetUserShopListResponse);
+  rpc getShopList(GetShopListRequest) returns (GetShopListResponse);
+  rpc getSerialNo(GetSerialNoRequest) returns (GetSerialNoResponse);
+  rpc getShop(GetShopRequest) returns (GetShopResponse);
+}
+
+message GetUserShopListRequest{
+  optional int64 user_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+}
+message GetUserShopListResponse{
+  common.ResponseStatus status = 1;
+  GetUserShopListResult result = 2;
+}
+message GetUserShopListResult{
+  repeated ShopInfo shop_infos = 1;
+}
+message ShopInfo{
+  optional int64 shop_id = 1;
+  optional int64 owner_user_id = 2;
+  optional string shop_name = 3;
+  optional string logo = 4;
+  optional string intro = 5;
+  optional string address = 6;
+  optional string phone = 7;
+  optional int32 status = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+}
+
+message GetShopListRequest{
+  repeated int64 shop_ids = 1 [(buf.validate.field).required = true, (buf.validate.field).repeated.min_items = 1];
+}
+message GetShopListResponse{
+  common.ResponseStatus status = 1;
+  GetShopListResult result = 2;
+}
+message GetShopListResult{
+  repeated ShopInfo shop_infos = 1;
+}
+
+message GetSerialNoRequest{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional string serial_no = 2 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+message GetSerialNoResponse{
+  common.ResponseStatus status = 1;
+  GetSerialNoResult result = 2;
+}
+message GetSerialNoResult{
+  optional string serial_no = 1;
+}
+
+message GetShopRequest{
+  optional int64 shop_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+}
+message GetShopResponse{
+  common.ResponseStatus status = 1;
+  GetShopResult result = 2;
+}
+message GetShopResult{
+  optional int64 shop_id = 1;
+  optional int64 owner_user_id = 2;
+  optional string shop_name = 3;
+  optional string logo = 4;
+  optional string intro = 5;
+  optional string address = 6;
+  optional string phone = 7;
+  optional int32 status = 8;
+  optional google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp updated_at = 10;
+}

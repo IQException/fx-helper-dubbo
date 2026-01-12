@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: fx-helper
+
+resources:
+  - spring-cloud-gateway.yaml
+  - fx-helper-misc.yaml
+  - fx-helper-account.yaml
+  - fx-helper-user.yaml
+  - fx-helper-shop.yaml
+  - fx-helper-order.yaml
+  - fx-helper-pay.yaml
+  - fx-helper-agg.yaml

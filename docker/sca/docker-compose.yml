@@ -1,0 +1,78 @@
+services:
+  dubbo-admin:
+    image: apache/dubbo-admin:0.6.0
+    container_name: dubbo-admin
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - "38080:38080"
+    volumes:
+      - ./dubbo/admin/config:/config
+
+  #Service for nameserver
+  rmq-namesrv:
+    image: apache/rocketmq:5.3.1
+    container_name: rmqnamesrv
+    ports:
+      - "9876:9876"
+    volumes:
+      - ./rocketmq/data/namesrv/logs:/home/rocketmq/logs
+    command: sh mqnamesrv
+
+  #Service for broker
+  rmq-broker:
+    image: apache/rocketmq:5.3.1
+    container_name: rmqbroker
+    links:
+      - rmq-namesrv
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+      - "10912:10912"
+    environment:
+      - NAMESRV_ADDR=rmq-namesrv:9876
+    volumes:
+      - ./rocketmq/data/broker/logs:/home/rocketmq/logs
+      - ./rocketmq/data/broker/store:/home/rocketmq/store
+      - ./rocketmq/data/broker/conf/broker.conf:/opt/rocketmq-5.3.1/conf/broker.conf
+    command: sh mqbroker -c /opt/rocketmq-5.3.1/conf/broker.conf
+
+  #Service for another broker -- broker1
+  #  rmq-broker1:
+  #    image: apache/rocketmq:5.3.1
+  #    container_name: rmqbroker-b
+  #    links:
+  #      - rmq-namesrv
+  #    ports:
+  #      - "10929:10909"
+  #      - "10931:10911"
+  #      - "10932:10912"
+  #    environment:
+  #      - NAMESRV_ADDR=rmq-namesrv:9876
+  #    volumes:
+  #      - ./rocketmq/data1/broker/logs:/home/rocketmq/logs
+  #      - ./rocketmq/data1/broker/store:/home/rocketmq/store
+  #      - ./rocketmq/data1/broker/conf/broker.conf:/opt/rocketmq-5.3.1/conf/broker.conf
+  #    command: sh mqbroker -c /opt/rocketmq-5.3.1/conf/broker.conf
+
+  #Service for proxy
+#  rmq-proxy:
+#    image: apache/rocketmq:5.3.1
+#    container_name: rmqproxy
+#    links:
+#      - rmq-namesrv
+#      - rmq-broker
+#      - rmq-broker1
+#    depends_on:
+#      - rmq-broker
+#      - rmq-broker1
+#    ports:
+#      - "18080:8080"
+#      - "18081:8081"
+#    restart: on-failure
+#    environment:
+#      - NAMESRV_ADDR=rmq-namesrv:9876
+#    volumes:
+#      - ./rocketmq/proxy/logs:/home/rocketmq/logs
+#      - ./rocketmq/proxy/conf/rmq-proxy.json:/opt/rocketmq-5.3.1/conf/rmq-proxy.json
+#    command: sh mqproxy -pc /opt/rocketmq-5.3.1/conf/rmq-proxy.json

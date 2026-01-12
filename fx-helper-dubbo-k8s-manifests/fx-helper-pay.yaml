@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-helper-pay
+  namespace: fx-helper
+  labels:
+    app: fx-helper-pay
+spec:
+#  replicas: 3
+  selector:
+    matchLabels:
+      app: fx-helper-pay
+  template:
+    metadata:
+      labels:
+        app: fx-helper-pay
+    spec:
+      containers:
+        - name: fx-helper-pay
+          image: iqexception/fx-helper-dubbo-k8s:fx-helper-pay
+#          imagePullPolicy: Always
+
+

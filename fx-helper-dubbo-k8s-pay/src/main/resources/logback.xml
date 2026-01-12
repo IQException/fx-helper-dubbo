@@ -1,0 +1,66 @@
+<configuration>
+    <shutdownHook/>
+    <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%highlight(%p)] [%t] %replace([TraceId=%X{traceId:-}] ){'\[TraceId=\] ',''}%replace([SpanId=%X{spanId:-}] ){'\[SpanId=\] ',''}%replace([UserId=%X{userId:-}] ){'\[UserId=\] ',''}%replace([OpenId=%X{openId:-}] ){'\[OpenId=\] ',''}[%c] - %m%n%ex" />
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                ${LOG_PATTERN}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/fx-helper-pay.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/fx-helper-pay-%d{yyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>
+                ${LOG_PATTERN}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://host.docker.internal:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <staticLabels>true</staticLabels>
+                <!-- Labels -->
+                <pattern>
+                    app = fx-helper-pay,
+                    host = ${HOST_NAME},
+                    ip = ${HOST_IP}
+                </pattern>
+                <!-- Structured metadata (since Loki v2.9.0) -->
+                <structuredMetadataPattern>
+                    level = %level,
+                    thread = %thread,
+                    class = %logger,
+                    traceId = %X{traceId:-},
+                    spanId = %X{spanId:-},
+                    UserId = %X{userId:-},
+                    OpenId = %X{openId:-}
+                </structuredMetadataPattern>
+            </label>
+            <message>
+                <pattern>
+                    ${LOG_PATTERN}
+                </pattern>
+            </message>
+        </format>
+    </appender>
+
+    <appender name="AsyncLogFile" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="LogFile" />
+    </appender>
+    <root level="info">
+        <appender-ref ref="AsyncLogFile" />
+        <appender-ref ref="Console" />
+        <appender-ref ref="LOKI" />
+    </root>
+</configuration>

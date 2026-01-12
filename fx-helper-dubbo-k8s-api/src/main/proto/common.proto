@@ -1,0 +1,34 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.common;
+
+message ResponseStatus {
+  optional string error_code = 1 [(buf.validate.field).required = true];
+  optional string error_message = 2 ;
+  map<string, string> errors = 3;
+}
+
+message MobileRequestHead {
+  optional string app_id = 1;
+  optional string app_version = 2;
+  optional string device_id = 3;
+  optional string platform = 4;
+  optional string brand = 5;
+  optional string model = 6;
+  optional string system = 7;
+  optional string ip_addr = 9;
+  optional string mac_addr = 10;
+  optional string latitude = 11;
+  optional string longitude = 12;
+}
+
+message BaseRequest {
+  MobileRequestHead head = 1 [(buf.validate.field).required = true];
+}
+
+message BaseResponse {
+  ResponseStatus status = 1 [(buf.validate.field).required = true];
+}
+

@@ -1,0 +1,33 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.misc;
+
+service MiscRestService{
+  rpc msgSubscribe(MsgSubscribeRequest) returns (common.BaseResponse);
+  rpc getUploadPolicy(common.BaseRequest) returns (GetUploadPolicyResponse);
+}
+
+message MsgSubscribeRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  MsgSubscribeParam param = 2 [(buf.validate.field).required = true];
+}
+message MsgSubscribeParam{
+  optional string template_id = 1 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+
+message GetUploadPolicyResponse{
+  common.ResponseStatus status = 1;
+  GetUploadPolicyResult result = 2;
+}
+
+message GetUploadPolicyResult{
+  optional string policy = 1;
+  optional string signature = 2;
+  optional string dir = 3;
+  optional string host = 4;
+  optional string expire = 5;
+  optional string key = 6;
+  optional string accessid = 7;
+}

@@ -1,0 +1,59 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.account;
+
+service AccountService{
+  rpc create(CreateRequest) returns (CreateResponse);
+  rpc getAccount(GetAccountRequest) returns (GetAccountResponse);
+  rpc transfer(TransferRequest) returns (common.BaseResponse);
+  rpc incrBalance(IncrBalanceRequest) returns (common.BaseResponse);
+}
+
+message TransferRequest {
+  optional int64 from_account_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional int64 to_account_id = 2 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional string amount = 3 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+
+message IncrBalanceRequest{
+  optional int64 account_id = 1 [(buf.validate.field).required = true, (buf.validate.field).int64.gt = 0];
+  optional string amount = 2 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+
+message GetAccountRequest{
+  oneof id {
+    option (buf.validate.oneof).required = true;
+    int64 account_id = 1 [(buf.validate.field).int64.gt = 0];
+    int64 user_id = 2 [(buf.validate.field).int64.gt = 0];
+  }
+}
+
+message GetAccountResult{
+  optional int64 account_id = 1;
+  optional int64 user_id = 2;
+  optional string balance = 3;
+  optional int32 status = 4;
+  optional google.protobuf.Timestamp created_at = 5;
+  optional google.protobuf.Timestamp updated_at = 6;
+}
+
+message GetAccountResponse {
+  common.ResponseStatus status = 1;
+  GetAccountResult result = 2;
+}
+
+message CreateRequest{
+  optional int64 user_id = 1;
+}
+
+message CreateResult{
+  optional int64 account_id = 1;
+}
+
+message CreateResponse{
+  common.ResponseStatus status = 1;
+  CreateResult result = 2;
+}

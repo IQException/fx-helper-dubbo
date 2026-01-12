@@ -1,0 +1,27 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common.proto";
+import "google/protobuf/empty.proto";
+import "buf/validate/validate.proto";
+package com.iqexception.fxhelper.api.rest.user;
+
+message LoginRequest{
+  common.MobileRequestHead head = 1 [(buf.validate.field).required = true];
+  LoginParam param = 2 [(buf.validate.field).required = true];
+}
+message LoginParam{
+  optional string code = 1 [(buf.validate.field).required = true, (buf.validate.field).string.min_len = 1];
+}
+
+message LoginResponse{
+  common.ResponseStatus status = 1;
+  LoginResult result = 2;
+}
+message LoginResult{
+  optional string token = 1;
+  optional  bool new_user = 2;
+}
+
+message HelloResponse{
+  optional string reply = 1;
+}
