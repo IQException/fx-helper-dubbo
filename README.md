@@ -54,8 +54,9 @@ https://github.com/user-attachments/assets/aa9367c8-7d66-4e2b-9841-1de5f2bd446e
 
 根据以上原则和方法，大致可以将系统拆分为以下聚合：商家，用户，账户，支付，返现订单以及通知。在单体架构中，每个聚合对应一个模块；在分布式架构中，每个聚合对应一个微服务。
 
-![依赖关系](doc/依赖关系.png)
+![依赖关系](doc/依赖关系.png)<br/>
 *依赖关系*
+
 ![聚合设计](doc/聚合.png)
 *聚合设计*
 
@@ -129,4 +130,25 @@ https://github.com/user-attachments/assets/aa9367c8-7d66-4e2b-9841-1de5f2bd446e
     - 除了使用消息外，还可以使用job去轮询数据状态，根据状态进行业务处理。
 - client/api
     - 简单起见，将所有服务放在一个项目中（一般企业应用中，应当每个服务一个项目，每个项目都有很多模块，比如api/client、web、job等）;也将所有api/client放到一个一起，方便构建和理解。
+
+### 可观测性
+
+*Dashboard*
+
+![Dashboard](doc/Dashboard.png)
+![Basic](doc/Basic.png)
+![Jvm](doc/Jvm.png)
+![Log](doc/Log.png)
+
+*Logging*
+
+![Logging](doc/Logging.png)
+![Logging2](doc/Logging2.png)
+![Logging3](doc/Logging3.png)
+
+*Tracing*
+
+![Tracing](doc/Tracing.png)
+![Tracing2](doc/Tracing2.png)
+
 
